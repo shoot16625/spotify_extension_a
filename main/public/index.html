@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Spotify Extension A</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="content-language" content="en" />
+    <meta name="application-name" content="Spotify Extension A" />
+    <meta
+      name="description"
+      content="Let's create your spotify playlist from your favorite!!"
+    />
+    <meta name="keywords" content="spotify,extension,拡張,playlist,作成" />
+    <meta property="og:title" content="Spotify Extension A" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:description"
+      content="Let's create your spotify playlist from your favorite!!"
+    />
+    <link rel="icon" href="./statics/img/shijimi-48x48.ico" />
+    <meta name="apple-mobile-web-app-title" content="Spotify Extension A" />
+
+    <!-- ツイッターカード -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@playtag551" />
+    <meta property="og:url" content="https://spotify_extension.shijimi.work" />
+    <meta property="og:title" content="ShiJimi" />
+    <meta
+      property="og:description"
+      content="Let's create your spotify playlist from your favorite!!"
+    />
+    <meta
+      property="og:image"
+      content="https://spotify_extension.shijimi.work/statics/img/shijimi-192x192-transparence.png"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.min.js"
+      integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="./statics/css/common.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div id="login">
+        <div class="text-center headline">
+          <h1 class="box19">Spotify Extension A</h1>
+          <a href="/login" class="btn-gradient-radius">Log in with Spotify</a>
+        </div>
+        <div id="loggedin">
+          <div id="user-profile"></div>
+        </div>
+        <div id="select-condition"></div>
+        <div id="create-playlist"></div>
+      </div>
+    </div>
+
+    <script id="user-profile-template" type="text/x-handlebars-template">
+      <div class='row'>
+        <div class='col-lg-2'>
+          <img width='150' src='{{images.0.url}}' />
+        </div>
+        <div class='col-lg-10'>
+          <dl class='dl-horizontal'>
+            <dt class='dt-pos'>
+              Your Name
+            </dt>
+            <dd class='dd-pos'>
+              {{display_name}}
+            </dd>
+            <dt class='dt-pos'>
+              Email
+            </dt>
+            <dd class='dd-pos'>
+              {{email}}
+            </dd>
+            <dt class='dt-pos'>
+              Spotify URL
+            </dt>
+            <dd class='dd-pos'>
+              <a href='{{external_urls.spotify}}' class='long-url'>
+                {{external_urls.spotify}}
+              </a>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </script>
+
+    <script id="select-condition-template" type="text/x-handlebars-template">
+      <div class='select-area'>
+        <h2>
+          Let's Create Your Spotify Playlists!!
+        </h2>
+        <div class='row'>
+          <div class='box col-lg-6'>
+            <div class='select-header-area'>
+              1.Select what to get from your data
+            </div>
+            <input type='checkbox' id='target-music-box-artists' />
+            <label for='target-music-box-artists'>
+              Following Artists
+            </label>
+            <input type='checkbox' id='target-music-box-favorite' />
+            <label for='target-music-box-favorite'>
+              Favorite Music
+            </label>
+          </div>
+          <div class='box col-lg-6'>
+            <div class='result-header-area'>
+              Aquired Music
+            </div>
+            <div id='aquired-music-loader' class='loader'></div>
+            <div id='aquired-music' class='text-center'></div>
+          </div>
+        </div>
+        <div class='row box-selection'>
+          <div class='col-lg-6'>
+            <div class='select-header-area'>
+              2.Select your favorite music tone
+            </div>
+            <div class='row'>
+              <div class='text-center music-tone-selection'>
+                <div>
+                  <label for='slider-music-tone-tempo'>
+                    Music Tempo
+                  </label>
+                  <span class='slider-detail-left'>
+                    SLOW
+                  </span>
+                  <span class='slider-detail-right'>
+                    FAST
+                  </span>
+                </div>
+                <input
+                  type='range'
+                  id='slider-music-tone-tempo'
+                  value='2'
+                  min='0'
+                  max='4'
+                />
+                <div class='h4-container'>
+                  <div class='h4-subcontainer'>
+                    <h4 class='slider-music-tone-tempo'>
+                      <span>
+                        0
+                      </span>
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='toggle-area music-tone-selection'>
+                <input type='radio' name='rdo' id='radio-or' checked />
+                <input type='radio' name='rdo' id='radio-and' />
+                <div class='switch'>
+                  <label for='radio-or'>
+                    OR
+                  </label>
+                  <label for='radio-and'>
+                    AND
+                  </label>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='text-center music-tone-selection'>
+                <div>
+                  <label for='slider-music-tone-valence'>
+                    Atmosphere
+                  </label>
+                  <span class='slider-detail-left'>
+                    NEGATIVE
+                  </span>
+                  <span class='slider-detail-right'>
+                    POSITIVE
+                  </span>
+                </div>
+                <input
+                  type='range'
+                  id='slider-music-tone-valence'
+                  value='2'
+                  min='0'
+                  max='4'
+                />
+                <div class='h4-container'>
+                  <div class='h4-subcontainer'>
+                    <h4 class='slider-music-tone-valence'>
+                      0
+                      <span></span>
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class='col-lg-6'>
+            <div class='result-header-area'>
+              Target Music
+            </div>
+            <div id='target-music' class='text-center'></div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="create-playlist-template" type="text/x-handlebars-template">
+      <div class='row box-selection'>
+        <div class='col-lg-6'>
+          <div class='select-header-area'>
+            3.Create your playlist!
+          </div>
+          <div class='row'>
+            <div class='col-lg-6' style='text-align: -webkit-center;'>
+              <div class='cp_iptxt text-center'>
+                <label class='ef'>
+                  <input
+                    type='text'
+                    placeholder='Playlist Name'
+                    id='playlist-name'
+                  />
+                </label>
+              </div>
+            </div>
+            <div class='text-center col-lg-6'>
+              <button class='btn-circle-border' id='create-playlist-button'>
+                CREATE
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class='col-lg-6'>
+          <div class='result-header-area'>
+            Created Playlist
+          </div>
+          <div class='row'>
+            <div id='created-playlist-loader' class='loader'></div>
+            <div id='created-playlist' class='text-center'></div>
+          </div>
+        </div>
+      </div>
+    </script>
+
+    <script id="playlist-result-template" type="text/x-handlebars-template">
+      <div class='box-scrollbar'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th scope='col'>
+                #
+              </th>
+              <th scope='col'>
+                Track
+              </th>
+              <th scope='col'>
+                Artist
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each this}}
+              <tr>
+                <th scope='row'>
+                  {{@index}}
+                </th>
+                <td>
+                  {{name}}
+                </td>
+                <td>
+                  {{artist}}
+                </td>
+              </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </script>
+
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"
+      integrity="sha512-zT3zHcFYbQwjHdKjCu6OMmETx8fJA9S7E6W7kBeFxultf75OPTYUJigEKX58qgyQMi1m1EgenfjMXlRZG8BXaw=="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+      crossorigin="anonymous"
+    ></script>
+    <script type="text/javascript" src="./statics/js/common.js"></script>
+
+    <script>
+      ;(function () {
+        const userProfileSource = document.getElementById(
+            'user-profile-template'
+          ).innerHTML,
+          userProfileTemplate = Handlebars.compile(userProfileSource),
+          userProfilePlaceholder = document.getElementById('user-profile')
+
+        const selectConditionSource = document.getElementById(
+            'select-condition-template'
+          ).innerHTML,
+          selectConditionTemplate = Handlebars.compile(selectConditionSource),
+          selectConditionPlaceholder = document.getElementById(
+            'select-condition'
+          )
+        selectConditionPlaceholder.innerHTML = selectConditionTemplate()
+
+        const playlistResultSource = document.getElementById(
+            'playlist-result-template'
+          ).innerHTML,
+          playlistResultTemplate = Handlebars.compile(playlistResultSource),
+          aquiredMusicPlaceholder = document.getElementById('aquired-music'),
+          targetMusicPlaceholder = document.getElementById('target-music')
+
+        const createPlaylistSource = document.getElementById(
+            'create-playlist-template'
+          ).innerHTML,
+          createPlaylistTemplate = Handlebars.compile(createPlaylistSource),
+          createPlaylistPlaceholder = document.getElementById('create-playlist')
+        createPlaylistPlaceholder.innerHTML = createPlaylistTemplate()
+        const createdPlaylistPlaceholder = document.getElementById(
+          'created-playlist'
+        )
+
+        const params = getHashParams(),
+          cacheFavorite = 'cacheFavorite',
+          cacheArtist = 'cacheArtist',
+          cacheNewPlaylist = 'cacheNewPlaylist'
+
+        const accessToken = params.access_token,
+          refreshToken = params.refresh_token,
+          accessError = params.error
+
+        let userId = 0
+        let cacheResult = { items: {} }
+        localStorage.clear()
+
+        if (accessError) {
+          alert('There was an error during the authentication')
+          return
+        }
+
+        if (accessToken) {
+          const userInfo = getUserInfo(accessToken)
+          userInfo.then(function (response) {
+            userProfilePlaceholder.innerHTML = userProfileTemplate(response)
+            userId = response.id
+          })
+          $('#loggedin').show()
+        } else {
+          $('#loggedin').hide()
+        }
+
+        $('#obtain-new-token').click(function () {
+          const newToken = refleshToken(refreshToken)
+          newToken.then(function (response) {
+            accessToken = response.access_token
+          })
+        })
+
+        $('#target-music-box-favorite').click(function () {
+          const cacheKeys = [cacheFavorite, cacheArtist]
+          if ($('#target-music-box-favorite').prop('checked') && accessToken) {
+            $('#aquired-music-loader').css('display', 'block')
+            let promises = []
+            let maxSize = 200,
+              limit = 20,
+              offset = 0
+            for (let i = 0; i < maxSize / limit; i++) {
+              promises.push(getSavedTracks(limit, offset, accessToken))
+              offset += limit
+            }
+
+            // いいねした曲を取得
+            Promise.all(promises).then(function (response) {
+              let items = {}
+              for (let i = 0; i < response.length; i++) {
+                for (let j = 0; j < response[i].items.length; j++) {
+                  const track = response[i].items[j].track
+                  items[track.id] = track
+                }
+              }
+              const trackNum = Object.keys(items).length
+              console.log('Target Music Num: ' + String(trackNum))
+
+              let promises = []
+              const maxSize = 80
+              const trackIds = Object.keys(items)
+              const splitTrackIds = sliceByNumber(trackIds, maxSize)
+              splitTrackIds.forEach((trackIds) => {
+                promises.push(getTracksFeature(trackIds, accessToken))
+              })
+
+              // 曲の特徴を取得
+              Promise.all(promises).then(function (response) {
+                for (let i = 0; i < response.length; i++) {
+                  const features = response[i].audio_features
+                  for (let j = 0; j < features.length; j++) {
+                    if (trackIds.includes(features[j].id)) {
+                      items[features[j].id].feature = features[j]
+                      console.log(items[features[j].id].name, features[j])
+                    }
+                  }
+                }
+
+                items = dropUnusedInfo(items)
+                localStorage.setItem(cacheFavorite, JSON.stringify(items))
+                $('#aquired-music-loader').css('display', 'none')
+                items = getCachedTracks(cacheKeys)
+                aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
+                  items
+                )
+                targetMusicPlaceholder.innerHTML = playlistResultTemplate(items)
+                localStorage.setItem(cacheNewPlaylist, JSON.stringify(items))
+              })
+            })
+          } else {
+            localStorage.removeItem(cacheFavorite)
+            const items = getCachedTracks(cacheKeys)
+            aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(items)
+            targetMusicPlaceholder.innerHTML = playlistResultTemplate(items)
+            localStorage.setItem(cacheNewPlaylist, JSON.stringify(items))
+          }
+        })
+
+        $('#target-music-box-artists').click(function () {
+          const cacheKeys = [cacheFavorite, cacheArtist]
+          if ($('#target-music-box-artists').prop('checked') && accessToken) {
+            $('#aquired-music-loader').css('display', 'block')
+            let promises = []
+            const maxSize = (limit = 50)
+            for (let i = 0; i < maxSize / limit; i++) {
+              promises.push(getFollowingArtists(limit, accessToken))
+            }
+
+            // フォローしているアーティストを取得
+            Promise.all(promises).then(function (response) {
+              let promises = []
+              let limit = 7,
+                offset = 0
+              for (let i = 0; i < response.length; i++) {
+                const artists = response[i].artists.items
+                for (let j = 0; j < artists.length; j++) {
+                  promises.push(
+                    getArtistAlbums(artists[j].id, limit, offset, accessToken)
+                  )
+                }
+              }
+              console.log('Target Artist Num: ' + String(promises.length))
+
+              // アーティストのアルバムを取得
+              Promise.all(promises).then(function (response) {
+                let albumNum = 0
+                for (let i = 0; i < response.length; i++) {
+                  albumNum += response[i].items.length
+                }
+                let limit = 5
+                let promises = []
+                for (let i = 0; i < response.length; i++) {
+                  const albums = response[i].items
+                  for (let j = 0; j < albums.length; j++) {
+                    promises.push(
+                      getAlbumTracks(
+                        albums[j].id,
+                        limit,
+                        (offset = Math.round(4 * Math.random())),
+                        albumNum,
+                        accessToken
+                      )
+                    )
+                  }
+                }
+                console.log('Target Album Num: ' + String(albumNum))
+
+                // アルバムの収録曲を取得
+                Promise.all(promises).then(function (response) {
+                  let items = {},
+                    appearedTracks = {}
+                  for (let i = 0; i < response.length; i++) {
+                    const tracks = response[i].items
+                    for (let j = 0; j < tracks.length; j++) {
+                      const track = tracks[j],
+                        key = track.name + track.artists[0].id,
+                        nonTargetTitle = 'ver.'
+                      if (
+                        !appearedTracks.hasOwnProperty(key) &&
+                        track.name.indexOf(nonTargetTitle) === -1
+                      ) {
+                        // 曲の重複排除を排除する（idが異なっても同じ曲が多い.marketの違いなどのためか）
+                        appearedTracks[key] = key
+                        items[track.id] = track
+                      }
+                    }
+                  }
+                  const trackNum = Object.keys(items).length
+                  console.log('Target Music Num: ' + String(trackNum))
+
+                  let promises = []
+                  const maxSize = 80
+                  const trackIds = Object.keys(items)
+                  const splitTrackIds = sliceByNumber(trackIds, maxSize)
+                  splitTrackIds.forEach((trackIds) => {
+                    promises.push(getTracksFeature(trackIds, accessToken))
+                  })
+
+                  // 曲の特徴を取得
+                  Promise.all(promises).then(function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                      const features = response[i].audio_features
+                      for (let j = 0; j < features.length; j++) {
+                        if (trackIds.includes(features[j].id)) {
+                          items[features[j].id].feature = features[j]
+                          console.log(items[features[j].id].name, features[j])
+                        }
+                      }
+                    }
+
+                    items = dropUnusedInfo(items)
+                    localStorage.setItem(cacheArtist, JSON.stringify(items))
+                    $('#aquired-music-loader').css('display', 'none')
+                    items = getCachedTracks(cacheKeys)
+                    aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
+                      items
+                    )
+                    targetMusicPlaceholder.innerHTML = playlistResultTemplate(
+                      items
+                    )
+                    localStorage.setItem(
+                      cacheNewPlaylist,
+                      JSON.stringify(items)
+                    )
+                  })
+                })
+              })
+            })
+          } else {
+            localStorage.removeItem(cacheArtist)
+            const items = getCachedTracks(cacheKeys)
+            aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(items)
+            targetMusicPlaceholder.innerHTML = playlistResultTemplate(items)
+            localStorage.setItem(cacheNewPlaylist, JSON.stringify(items))
+          }
+        })
+
+        // 選択した曲調に応じた曲を抽出・保存する
+        $('.music-tone-selection').on('change', function () {
+          const tempoWeight = $('#slider-music-tone-tempo').val() - 2,
+            valenceWeight = $('#slider-music-tone-valence').val() - 2,
+            enableOr = $('#radio-or').prop('checked')
+          const cacheKeys = [cacheFavorite, cacheArtist]
+          const items = getCachedTracks(cacheKeys)
+
+          if (!Object.keys(items).length) {
+            return
+          }
+
+          const Tones = {
+            fastTempo: {
+              targetKeys: ['tempo', 'energy'],
+              thresholds: [100, 0.8],
+              validComp: '>='
+            },
+            slowTempo: {
+              targetKeys: ['tempo', 'energy'],
+              thresholds: [100, 0.8],
+              validComp: '<'
+            },
+            positive: {
+              targetKeys: ['valence'],
+              thresholds: [0.5],
+              validComp: '>='
+            },
+            negative: {
+              targetKeys: ['valence'],
+              thresholds: [0.5],
+              validComp: '<'
+            }
+          }
+
+          let newItems = {}
+          if (enableOr) {
+            // or条件
+            Object.keys(Tones).forEach((tone) => {
+              let extractItems
+              if (['fastTempo', 'slowTempo'].includes(tone)) {
+                extractItems = extractTrackIdsOf2Feature(
+                  items,
+                  Tones[tone].targetKeys,
+                  Tones[tone].thresholds,
+                  Tones[tone].validComp
+                )
+                if (
+                  (tempoWeight === -1 && tone === 'fastTempo') ||
+                  (tempoWeight === 1 && tone === 'slowTempo')
+                ) {
+                  // weight:1 = fastTempoの曲を多め, slowTempoの曲を少なめに
+                  const maxSize = Math.round(
+                    Object.keys(extractItems).length / 2
+                  )
+                  extractItems = extractRandomTracks(extractItems, maxSize)
+                  newItems = Object.assign(newItems, extractItems)
+                } else if (
+                  tempoWeight === 0 ||
+                  (tempoWeight === -2 && tone === 'fastTempo') ||
+                  (tempoWeight === 2 && tone === 'slowTempo')
+                ) {
+                  // weight:0 = tempoを選択しない
+                  // weight:2 = fastTempoの曲のみ
+                } else {
+                  newItems = Object.assign(newItems, extractItems)
+                }
+              } else {
+                extractItems = extractTrackIdsOfFeature(
+                  items,
+                  Tones[tone].targetKeys,
+                  Tones[tone].thresholds,
+                  Tones[tone].validComp
+                )
+                if (
+                  (valenceWeight === -1 && tone === 'positive') ||
+                  (valenceWeight === 1 && tone === 'negative')
+                ) {
+                  const maxSize = Math.round(
+                    Object.keys(extractItems).length / 2
+                  )
+                  extractItems = extractRandomTracks(extractItems, maxSize)
+                  newItems = Object.assign(newItems, extractItems)
+                } else if (
+                  valenceWeight === 0 ||
+                  (valenceWeight === -2 && tone === 'positive') ||
+                  (valenceWeight === 2 && tone === 'negative')
+                ) {
+                } else {
+                  newItems = Object.assign(newItems, extractItems)
+                }
+              }
+            })
+          } else {
+            // and条件
+            let extractItems,
+              tempoItems = {},
+              valenceItems = {}
+            Object.keys(Tones).forEach((tone) => {
+              if (['fastTempo', 'slowTempo'].includes(tone)) {
+                extractItems = extractTrackIdsOf2Feature(
+                  items,
+                  Tones[tone].targetKeys,
+                  Tones[tone].thresholds,
+                  Tones[tone].validComp
+                )
+                if (
+                  (tempoWeight === -1 && tone === 'fastTempo') ||
+                  (tempoWeight === 1 && tone === 'slowTempo')
+                ) {
+                  const maxSize = Math.round(
+                    Object.keys(extractItems).length / 2
+                  )
+                  extractItems = extractRandomTracks(extractItems, maxSize)
+                  tempoItems = Object.assign(tempoItems, extractItems)
+                } else if (
+                  tempoWeight === 0 ||
+                  (tempoWeight === -2 && tone === 'fastTempo') ||
+                  (tempoWeight === 2 && tone === 'slowTempo')
+                ) {
+                } else {
+                  tempoItems = Object.assign(tempoItems, extractItems)
+                }
+              } else {
+                extractItems = extractTrackIdsOfFeature(
+                  items,
+                  Tones[tone].targetKeys,
+                  Tones[tone].thresholds,
+                  Tones[tone].validComp
+                )
+                if (
+                  (valenceWeight === -1 && tone === 'positive') ||
+                  (valenceWeight === 1 && tone === 'negative')
+                ) {
+                  const maxSize = Math.round(
+                    Object.keys(extractItems).length / 2
+                  )
+                  extractItems = extractRandomTracks(extractItems, maxSize)
+                  valenceItems = Object.assign(valenceItems, extractItems)
+                } else if (
+                  valenceWeight === 0 ||
+                  (valenceWeight === -2 && tone === 'positive') ||
+                  (valenceWeight === 2 && tone === 'negative')
+                ) {
+                } else {
+                  valenceItems = Object.assign(valenceItems, extractItems)
+                }
+              }
+            })
+            Object.keys(valenceItems).forEach((id) => {
+              if (id in tempoItems) {
+                newItems[id] = tempoItems[id]
+              }
+            })
+          }
+
+          localStorage.setItem(cacheNewPlaylist, JSON.stringify(newItems))
+          newItems = JSON.parse(localStorage.getItem(cacheNewPlaylist))
+          targetMusicPlaceholder.innerHTML = playlistResultTemplate(newItems)
+        })
+
+        // プレイリストを作成する
+        $('#create-playlist-button').click(function () {
+          let title = $('#playlist-name').val()
+          if (!title) {
+            const now = moment()
+            title = now.format('YYYY/MM/DD HH:mm')
+          }
+          let limit = 50,
+            offset = 0
+          const userPlaylists = getUserPlaylists(limit, offset, accessToken)
+          userPlaylists.then(function (playlists) {
+            const userPlaylistNames = playlists.items.map((i) => i.name)
+            if (userPlaylistNames.includes(title)) {
+              alert(title + ' is existed')
+              return
+            }
+
+            const maxSize = 80 // 上限100程度
+            const cacheKeys = [cacheNewPlaylist]
+            let items = getCachedTracks(cacheKeys)
+            items = extractRandomTracks(items, maxSize)
+
+            const trackNum = Object.keys(items).length
+            if (!trackNum) {
+              return
+            }
+            console.log('Saved Music Num: ' + String(trackNum))
+
+            $('#created-playlist-loader').css('display', 'block')
+            const playlistBody = {
+              name: title,
+              description:
+                'Created by Spotify Extension A (https://spotify_extension.shijimi.work)',
+              public: true
+            }
+            const createPlaylist = createNewPlaylist(
+              userId,
+              playlistBody,
+              accessToken
+            )
+
+            createPlaylist.then(function (createdPlaylist) {
+              const uris = Object.values(items).map((i) => i.uri)
+              const uriBody = { uris: uris }
+              const addTracks = addTracksToPlaylist(
+                createdPlaylist.id,
+                uriBody,
+                accessToken
+              )
+
+              addTracks.then(function (response) {
+                $('#created-playlist-loader').css('display', 'none')
+                console.log(title + ' was created !!')
+                console.log(createdPlaylist.external_urls.spotify)
+                createdPlaylistPlaceholder.innerHTML =
+                  "<iframe src='https://open.spotify.com/embed/playlist/" +
+                  createdPlaylist.id +
+                  "' width='300' height='380' frameborder='0' allowtransparency='true' allow='encrypted-media'></iframe>"
+              })
+            })
+          })
+        })
+      })()
+    </script>
+  </body>
+</html>

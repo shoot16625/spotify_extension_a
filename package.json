@@ -1,0 +1,40 @@
+{
+  "name": "spotify-extension-a",
+  "version": "1.0.0",
+  "description": "Let's create spotify playlists automatically!!",
+  "main": "main/index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "ts-node": "ts-node",
+    "start": "tsc && node ./main"
+  },
+  "author": "shoot16625",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.9",
+    "@types/express": "^4.17.11",
+    "@types/express-rate-limit": "^5.1.1",
+    "@types/node": "^14.14.27",
+    "@types/request": "^2.48.5",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "ts-node": "^9.1.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typescript": "^4.1.5"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.2.6",
+    "querystring": "^0.2.0",
+    "request": "^2.88.2"
+  }
+}
