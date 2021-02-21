@@ -1,0 +1,11 @@
+version: '2'
+services:
+  node:
+    container_name: spotify-extensin-a
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8888:8888
+    restart: always
+    tty: true
