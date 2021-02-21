@@ -717,6 +717,10 @@
 
         // プレイリストを作成する
         $('#create-playlist-button').click(function () {
+          if (!accessToken) {
+            return
+          }
+
           let title = $('#playlist-name').val()
           if (!title) {
             const now = moment()
