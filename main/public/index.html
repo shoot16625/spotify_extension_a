@@ -777,6 +777,14 @@
                 accessToken
               )
 
+              // 最下部へスクロールする
+              $('html, body').animate(
+                {
+                  scrollTop: $(document).height()
+                },
+                1000
+              )
+
               addTracks.then(function (response) {
                 $('#created-playlist-loader').css('display', 'none')
                 console.log(title + ' was created !!')
