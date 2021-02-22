@@ -488,6 +488,7 @@
                     )
                   }
                 }
+                promises = selectRandom(promises, promises.length)
                 console.log('Target Album Num: ' + String(albumNum))
 
                 // アルバムの収録曲を取得
@@ -514,8 +515,9 @@
                   console.log('Target Music Num: ' + String(trackNum))
 
                   let promises = []
-                  const maxSize = 80
-                  const trackIds = Object.keys(items)
+                  const maxSize = 100
+                  let trackIds = Object.keys(items)
+                  trackIds = selectRandom(trackIds, trackIds.length)
                   const splitTrackIds = sliceByNumber(trackIds, maxSize)
                   splitTrackIds.forEach((trackIds) => {
                     promises.push(getTracksFeature(trackIds, accessToken))
