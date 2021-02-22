@@ -147,7 +147,7 @@ function getTracksFeature(trackIds, accessToken) {
   return new Promise(function (resolve) {
     sleep(1).done(function () {
       $.ajax({
-        url: encodeURI('https://api.spotify.com/v1/audio-features/'),
+        url: encodeURI('https://api.spotify.com/v1/audio-features'),
         headers: {
           Authorization: 'Bearer ' + accessToken
         },
