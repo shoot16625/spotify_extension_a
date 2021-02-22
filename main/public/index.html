@@ -63,6 +63,11 @@
         <div id="create-playlist"></div>
       </div>
     </div>
+    <footer class="footer">
+      <div class="container">
+        <p class="text-muted">&copy; 2021 shijimi</p>
+      </div>
+    </footer>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
       <div class='row'>
@@ -376,7 +381,7 @@
             $('#aquired-music-loader').css('display', 'block')
             let promises = []
             let maxSize = 200,
-              limit = 20,
+              limit = 50,
               offset = 0
             for (let i = 0; i < maxSize / limit; i++) {
               promises.push(getSavedTracks(limit, offset, accessToken))
@@ -396,7 +401,7 @@
               console.log('Target Music Num: ' + String(trackNum))
 
               let promises = []
-              const maxSize = 80
+              const maxSize = 50
               const trackIds = Object.keys(items)
               const splitTrackIds = sliceByNumber(trackIds, maxSize)
               splitTrackIds.forEach((trackIds) => {
@@ -466,6 +471,7 @@
                 for (let i = 0; i < response.length; i++) {
                   albumNum += response[i].items.length
                 }
+
                 let limit = 5
                 let promises = []
                 for (let i = 0; i < response.length; i++) {
