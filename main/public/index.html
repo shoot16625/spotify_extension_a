@@ -500,10 +500,10 @@
                     for (let j = 0; j < tracks.length; j++) {
                       const track = tracks[j],
                         key = track.name + track.artists[0].id,
-                        nonTargetTitle = 'ver.'
+                        regex = 'Live at |Version-|ver\\.|Instrumental'
                       if (
                         !appearedTracks.hasOwnProperty(key) &&
-                        track.name.indexOf(nonTargetTitle) === -1
+                        !track.name.match(regex)
                       ) {
                         // 曲の重複排除を排除する（idが異なっても同じ曲が多い.marketの違いなどのためか）
                         appearedTracks[key] = key
