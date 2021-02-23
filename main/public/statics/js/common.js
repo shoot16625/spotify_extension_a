@@ -51,13 +51,13 @@ function refleshToken(refreshToken) {
 
 // ユーザの情報を取得する
 function getUserInfo(accessToken) {
-  return new Promise(function (resolve) {
+  return new Promise(function (resolve,error) {
     $.ajax({
       url: encodeURI('https://api.spotify.com/v1/me'),
       headers: {
         Authorization: 'Bearer ' + accessToken
       }
-    }).then((response) => resolve(response))
+    }).then((response) => resolve(response), (response) => error(response))
   })
 }
 
