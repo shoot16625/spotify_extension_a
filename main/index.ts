@@ -12,8 +12,8 @@ const clientSecret = process.env.CLIENT_SECRET // Your secret
 const redirectUri = process.env.CALLBACK_URL // Your redirect uri
 const stateKey = 'spotify_auth_state'
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 1000 // limit each IP to 100 requests per windowMs
+  windowMs: 1 * 60 * 1000,
+  max: 10000
 })
 
 const generateRandomString = function (length: number): string {
