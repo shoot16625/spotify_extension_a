@@ -117,8 +117,9 @@ h2 {
   transition: 0.4s;
 }
 
-.btn-circle-border:hover {
+.btn-circle-border:focus {
   border-style: dashed;
+  outline: 0;
 }
 
 .dd-pos {
