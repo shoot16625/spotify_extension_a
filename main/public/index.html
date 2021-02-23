@@ -358,8 +358,8 @@
           cacheArtist = 'cacheArtist',
           cacheNewPlaylist = 'cacheNewPlaylist'
 
-        const accessToken = params.access_token,
-          refreshToken = params.refresh_token,
+        let accessToken = params.access_token
+        const refreshToken = params.refresh_token,
           accessError = params.error
 
         let userId = 0
@@ -372,12 +372,28 @@
         }
 
         if (accessToken) {
-          const userInfo = getUserInfo(accessToken)
-          userInfo.then(function (response) {
-            userProfilePlaceholder.innerHTML = userProfileTemplate(response)
-            userId = response.id
-          })
-          $('#loggedin').show()
+          let userInfo = getUserInfo(accessToken)
+          userInfo
+            .then(function (response) {
+              userProfilePlaceholder.innerHTML = userProfileTemplate(response)
+              userId = response.id
+              $('#loggedin').show()
+            })
+            .catch(function () {
+              // アクセストークンが期限切れになった時に、リフレッシュする
+              const newToken = refleshToken(refreshToken)
+              newToken.then(function (response) {
+                accessToken = response.access_token
+                userInfo = getUserInfo(accessToken)
+                userInfo.then(function (response) {
+                  userProfilePlaceholder.innerHTML = userProfileTemplate(
+                    response
+                  )
+                  userId = response.id
+                  $('#loggedin').show()
+                })
+              })
+            })
         } else {
           $('#loggedin').hide()
         }
