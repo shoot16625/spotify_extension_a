@@ -413,7 +413,7 @@ input:not(:active) + .h4-container h4 {
     margin: -2px 0px 0px -4px;
     background: #fff;
     display: block;
-    transform: rotate(-45deg);
+    transform: rotate(-90deg);
     transition: all 0.2s ease;
   }
   .switch span:after {
@@ -421,9 +421,11 @@ input:not(:active) + .h4-container h4 {
     display: block;
     position: absolute;
     width: 4px;
-    height: 12px;
-    margin-top: -8px;
+    height: 20px;
+    margin-top: -18px;
+    margin-left: 8px;
     background: #fff;
+    transform: rotate(90deg);
     transition: all 0.2s ease;
   }
   input[type='radio'] {
@@ -451,12 +453,14 @@ input:not(:active) + .h4-container h4 {
   #radio-and:checked ~ .switch span {
     background: #fff;
     margin-left: -8px;
+    transform: rotate(45deg);
   }
   #radio-and:checked ~ .switch span:after {
     background: #fff;
     height: 20px;
     margin-top: -8px;
     margin-left: 8px;
+    transform: rotate(0deg);
   }
   #radio-or:checked ~ .switch label[for='radio-or'] {
     color: #fff;
