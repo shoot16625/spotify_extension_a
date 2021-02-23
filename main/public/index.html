@@ -398,13 +398,6 @@
           $('#loggedin').hide()
         }
 
-        $('#obtain-new-token').click(function () {
-          const newToken = refleshToken(refreshToken)
-          newToken.then(function (response) {
-            accessToken = response.access_token
-          })
-        })
-
         $('#target-music-box-favorite').click(function () {
           const cacheKeys = [cacheFavorite, cacheArtist]
           if ($('#target-music-box-favorite').prop('checked') && accessToken) {
