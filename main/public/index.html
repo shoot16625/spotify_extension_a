@@ -439,27 +439,33 @@
               })
 
               // 曲の特徴を取得
-              Promise.all(promises).then(function (response) {
-                for (let i = 0; i < response.length; i++) {
-                  const features = response[i].audio_features
-                  for (let j = 0; j < features.length; j++) {
-                    if (trackIds.includes(features[j].id)) {
-                      items[features[j].id].feature = features[j]
-                      console.log(items[features[j].id].name, features[j])
+              Promise.all(promises)
+                .then(function (response) {
+                  for (let i = 0; i < response.length; i++) {
+                    const features = response[i].audio_features
+                    for (let j = 0; j < features.length; j++) {
+                      if (trackIds.includes(features[j].id)) {
+                        items[features[j].id].feature = features[j]
+                        console.log(items[features[j].id].name, features[j])
+                      }
                     }
                   }
-                }
 
-                items = dropUnusedInfo(items)
-                localStorage.setItem(cacheFavorite, JSON.stringify(items))
-                $('#aquired-music-loader').css('display', 'none')
-                items = getCachedTracks(cacheKeys)
-                aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
-                  items
-                )
-                targetMusicPlaceholder.innerHTML = playlistResultTemplate(items)
-                localStorage.setItem(cacheNewPlaylist, JSON.stringify(items))
-              })
+                  items = dropUnusedInfo(items)
+                  localStorage.setItem(cacheFavorite, JSON.stringify(items))
+                  $('#aquired-music-loader').css('display', 'none')
+                  items = getCachedTracks(cacheKeys)
+                  aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
+                    items
+                  )
+                  targetMusicPlaceholder.innerHTML = playlistResultTemplate(
+                    items
+                  )
+                  localStorage.setItem(cacheNewPlaylist, JSON.stringify(items))
+                })
+                .catch(function () {
+                  $('#aquired-music-loader').css('display', 'none')
+                })
             })
           } else {
             localStorage.removeItem(cacheFavorite)
@@ -496,92 +502,96 @@
               console.log('Target Artist Num: ' + String(promises.length))
 
               // アーティストのアルバムを取得
-              Promise.all(promises).then(function (response) {
-                let albumNum = 0
-                for (let i = 0; i < response.length; i++) {
-                  albumNum += response[i].items.length
-                }
-
-                let limit = 5
-                let promises = []
-                for (let i = 0; i < response.length; i++) {
-                  const albums = response[i].items
-                  for (let j = 0; j < albums.length; j++) {
-                    promises.push(
-                      getAlbumTracks(
-                        albums[j].id,
-                        limit,
-                        (offset = Math.round(4 * Math.random())),
-                        albumNum,
-                        accessToken
-                      )
-                    )
-                  }
-                }
-                promises = selectRandom(promises, promises.length)
-                console.log('Target Album Num: ' + String(albumNum))
-
-                // アルバムの収録曲を取得
-                Promise.all(promises).then(function (response) {
-                  let items = {},
-                    appearedTracks = {}
+              Promise.all(promises)
+                .then(function (response) {
+                  let albumNum = 0
                   for (let i = 0; i < response.length; i++) {
-                    const tracks = response[i].items
-                    for (let j = 0; j < tracks.length; j++) {
-                      const track = tracks[j],
-                        key = track.name + track.artists[0].id,
-                        regex = 'Live at |Version-|ver\\.|Instrumental'
-                      if (
-                        !appearedTracks.hasOwnProperty(key) &&
-                        !track.name.match(regex)
-                      ) {
-                        // 曲の重複排除を排除する（idが異なっても同じ曲が多い.marketの違いなどのためか）
-                        appearedTracks[key] = key
-                        items[track.id] = track
-                      }
+                    albumNum += response[i].items.length
+                  }
+
+                  let limit = 5
+                  let promises = []
+                  for (let i = 0; i < response.length; i++) {
+                    const albums = response[i].items
+                    for (let j = 0; j < albums.length; j++) {
+                      promises.push(
+                        getAlbumTracks(
+                          albums[j].id,
+                          limit,
+                          (offset = Math.round(4 * Math.random())),
+                          albumNum,
+                          accessToken
+                        )
+                      )
                     }
                   }
-                  const trackNum = Object.keys(items).length
-                  console.log('Target Music Num: ' + String(trackNum))
+                  promises = selectRandom(promises, promises.length)
+                  console.log('Target Album Num: ' + String(albumNum))
 
-                  let promises = []
-                  const maxSize = 100
-                  let trackIds = Object.keys(items)
-                  trackIds = selectRandom(trackIds, trackIds.length)
-                  const splitTrackIds = sliceByNumber(trackIds, maxSize)
-                  splitTrackIds.forEach((trackIds) => {
-                    promises.push(getTracksFeature(trackIds, accessToken))
-                  })
-
-                  // 曲の特徴を取得
+                  // アルバムの収録曲を取得
                   Promise.all(promises).then(function (response) {
+                    let items = {},
+                      appearedTracks = {}
                     for (let i = 0; i < response.length; i++) {
-                      const features = response[i].audio_features
-                      for (let j = 0; j < features.length; j++) {
-                        if (trackIds.includes(features[j].id)) {
-                          items[features[j].id].feature = features[j]
-                          console.log(items[features[j].id].name, features[j])
+                      const tracks = response[i].items
+                      for (let j = 0; j < tracks.length; j++) {
+                        const track = tracks[j],
+                          key = track.name + track.artists[0].id,
+                          regex = 'Live at |Version-|ver\\.|Instrumental'
+                        if (
+                          !appearedTracks.hasOwnProperty(key) &&
+                          !track.name.match(regex)
+                        ) {
+                          // 曲の重複排除を排除する（idが異なっても同じ曲が多い.marketの違いなどのためか）
+                          appearedTracks[key] = key
+                          items[track.id] = track
                         }
                       }
                     }
+                    const trackNum = Object.keys(items).length
+                    console.log('Target Music Num: ' + String(trackNum))
 
-                    items = dropUnusedInfo(items)
-                    localStorage.setItem(cacheArtist, JSON.stringify(items))
-                    $('#aquired-music-loader').css('display', 'none')
-                    items = getCachedTracks(cacheKeys)
-                    aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
-                      items
-                    )
-                    targetMusicPlaceholder.innerHTML = playlistResultTemplate(
-                      items
-                    )
-                    localStorage.setItem(
-                      cacheNewPlaylist,
-                      JSON.stringify(items)
-                    )
+                    let promises = []
+                    const maxSize = 100
+                    let trackIds = Object.keys(items)
+                    trackIds = selectRandom(trackIds, trackIds.length)
+                    const splitTrackIds = sliceByNumber(trackIds, maxSize)
+                    splitTrackIds.forEach((trackIds) => {
+                      promises.push(getTracksFeature(trackIds, accessToken))
+                    })
+
+                    // 曲の特徴を取得
+                    Promise.all(promises).then(function (response) {
+                      for (let i = 0; i < response.length; i++) {
+                        const features = response[i].audio_features
+                        for (let j = 0; j < features.length; j++) {
+                          if (trackIds.includes(features[j].id)) {
+                            items[features[j].id].feature = features[j]
+                            console.log(items[features[j].id].name, features[j])
+                          }
+                        }
+                      }
+
+                      items = dropUnusedInfo(items)
+                      localStorage.setItem(cacheArtist, JSON.stringify(items))
+                      $('#aquired-music-loader').css('display', 'none')
+                      items = getCachedTracks(cacheKeys)
+                      aquiredMusicPlaceholder.innerHTML = playlistResultTemplate(
+                        items
+                      )
+                      targetMusicPlaceholder.innerHTML = playlistResultTemplate(
+                        items
+                      )
+                      localStorage.setItem(
+                        cacheNewPlaylist,
+                        JSON.stringify(items)
+                      )
+                    })
                   })
                 })
-              })
+                .catch(function () {
+                  $('#aquired-music-loader').css('display', 'none')
+                })
             })
           } else {
             localStorage.removeItem(cacheArtist)
