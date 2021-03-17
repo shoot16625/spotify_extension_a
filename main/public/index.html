@@ -482,11 +482,11 @@
             // フォローしているアーティストを取得
             Promise.all(promises).then(function (response) {
               let promises = []
-              let limit = 7,
-                offset = 0
+              const limit = 3
               for (let i = 0; i < response.length; i++) {
                 const artists = response[i].artists.items
                 for (let j = 0; j < artists.length; j++) {
+                  const offset = Math.round(4 * Math.random())
                   promises.push(
                     getArtistAlbums(artists[j].id, limit, offset, accessToken)
                   )
@@ -502,7 +502,8 @@
                     albumNum += response[i].items.length
                   }
 
-                  let limit = 5
+                  const limit = 14,
+                    offset = 0
                   let promises = []
                   for (let i = 0; i < response.length; i++) {
                     const albums = response[i].items
@@ -511,7 +512,7 @@
                         getAlbumTracks(
                           albums[j].id,
                           limit,
-                          (offset = Math.round(4 * Math.random())),
+                          offset,
                           albumNum,
                           accessToken
                         )
